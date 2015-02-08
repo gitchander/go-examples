@@ -2,8 +2,9 @@ package main
 
 import (
 	"crypto/sha256"
-	"enc/hex"
 	"fmt"
+
+	"github.com/gitchander/go-examples/crypto/hex"
 )
 
 func main() {

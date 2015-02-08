@@ -5,11 +5,12 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
-	"enc/hex"
 	"errors"
 	"fmt"
 	"hash"
 	"math/big"
+
+	"github.com/gitchander/go-examples/crypto/hex"
 )
 
 func main() {
