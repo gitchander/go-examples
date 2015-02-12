@@ -10,9 +10,9 @@ type Point struct {
 	X, Y int
 }
 
-func (p *Point) Equal(other Equaler) bool {
+func (p *Point) Equal(e Equaler) bool {
 
-	q, ok := other.(*Point)
+	q, ok := e.(*Point)
 	if !ok {
 		return false
 	}
@@ -20,7 +20,6 @@ func (p *Point) Equal(other Equaler) bool {
 	if p.X != q.X {
 		return false
 	}
-
 	if p.Y != q.Y {
 		return false
 	}
@@ -32,9 +31,9 @@ type Vertex struct {
 	X, Y int
 }
 
-func (v *Vertex) Equal(other Equaler) bool {
+func (v *Vertex) Equal(e Equaler) bool {
 
-	w, ok := other.(*Vertex)
+	w, ok := e.(*Vertex)
 	if !ok {
 		return false
 	}
@@ -42,7 +41,6 @@ func (v *Vertex) Equal(other Equaler) bool {
 	if v.X != w.X {
 		return false
 	}
-
 	if v.Y != w.Y {
 		return false
 	}
@@ -50,19 +48,32 @@ func (v *Vertex) Equal(other Equaler) bool {
 	return true
 }
 
+func equalSample(a, b Equaler) {
+
+	var s string
+
+	if a.Equal(b) {
+		s = "=="
+	} else {
+		s = "!="
+	}
+
+	fmt.Printf("%v %s %v\n", a, s, b)
+}
+
 func main() {
 
-	var a, b, c, d Equaler
+	var a, b, c, d, e Equaler
 
 	a = &Point{12, 0}
 	b = &Point{-2, 14}
 	c = &Point{-2, 14}
-
-	fmt.Println("a == b -", a.Equal(b))
-	fmt.Println("b == c -", b.Equal(c))
-	fmt.Println("c == a -", c.Equal(a))
-
 	d = &Vertex{12, 0}
+	e = &Vertex{12, 0}
 
-	fmt.Println("a == d -", a.Equal(d))
+	equalSample(a, b)
+	equalSample(b, c)
+	equalSample(c, a)
+	equalSample(a, d)
+	equalSample(d, e)
 }
