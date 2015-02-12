@@ -7,17 +7,13 @@ import (
 	"github.com/gitchander/go-examples/lychrel"
 )
 
-func main() {
+func numberTest(v uint64) {
 
 	start := time.Now()
 
-	const base = 10
-	table := lychrel.NewTable(base)
+	fmt.Printf("test number %v:\n", v)
 
-	//n := NewNumber(table, 10)
-	n := lychrel.NewNumber(table, 196)
-	//n := NewNumber(table, 57)
-	//n := NewNumber(table, 1186060307891929990)
+	n := lychrel.NewNumber(v)
 
 	var iter, number int
 	const count = 1000
@@ -30,23 +26,29 @@ func main() {
 			break
 		}
 
-		fmt.Printf("Iterations: %d; count digits: %d\n", iter, n.CountDigits())
+		fmt.Printf("\titerations: %d; count digits: %d\n", iter, n.CountDigits())
 	}
 
-	fmt.Printf("time duration: %v\n", time.Since(start))
-
 	if number < count {
-		fmt.Printf("Is Lychrel number after %d iterations\n", iter)
+		fmt.Printf("\tlychrel number after iterations: %d\n", iter)
 
 		if n.CountDigits() < 200 {
-			fmt.Printf("%s\n", n)
+			fmt.Printf("\tpalindrome: %s\n", n)
 		}
 	}
 
+	fmt.Printf("\ttime duration: %v\n", time.Since(start))
+
+	fmt.Println()
+}
+
+func main() {
+
+	numberTest(10)
+	numberTest(57)
+	numberTest(196)
+	numberTest(1186060307891929990)
+
 	rd := lychrel.FindLychrelNumbers(10000, 10)
 	fmt.Println(rd)
-
-	//bs := []byte{23, 1, 2, 53, 4, 1, 23}
-	//fmt.Printf("%v is palindrome: %v\n", bs, IsPalindrome(bs))
-
 }

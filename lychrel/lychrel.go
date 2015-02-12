@@ -59,7 +59,11 @@ type privNumber struct {
 	t *ctTable
 }
 
-func NewNumber(t *ctTable, val uint64) Number {
+func NewNumber(val uint64) Number {
+	return NewNumberTable(TableBase10, val)
+}
+
+func NewNumberTable(t *ctTable, val uint64) Number {
 
 	var (
 		bs        []byte
@@ -244,7 +248,7 @@ func FindLychrelNumbers(max uint64, base int) []uint64 {
 	t := NewTable(base)
 	for i := uint64(1); i < max; i++ {
 
-		n := NewNumber(t, i)
+		n := NewNumberTable(t, i)
 		number := LychrelTest(n, count)
 		if number == count {
 			ns = append(ns, i)
