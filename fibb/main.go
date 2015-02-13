@@ -15,12 +15,9 @@ func Fibb() func() uint64 {
 
 func BigFibb() func() *big.Int {
 
-	a := new(big.Int)
-	b := new(big.Int)
+	a := big.NewInt(0)
+	b := big.NewInt(1)
 	c := new(big.Int)
-
-	a.SetInt64(0)
-	b.SetInt64(1)
 
 	return func() *big.Int {
 		c.Add(a, b)
@@ -32,8 +29,8 @@ func BigFibb() func() *big.Int {
 
 func main() {
 
-	f := BigFibb()
+	next := BigFibb()
 	for i := 0; i < 1000; i++ {
-		fmt.Printf("%s\n", f())
+		fmt.Printf("%s\n", next())
 	}
 }
