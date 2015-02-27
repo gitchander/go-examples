@@ -16,7 +16,7 @@ func OpenServer() *Server {
 
 func (s *Server) run() {
 
-	ticker := time.NewTicker(time.Millisecond * 500)
+	ticker := time.NewTicker(time.Millisecond * 1000)
 	for {
 		select {
 		case <-s.quit:
