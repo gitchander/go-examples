@@ -87,15 +87,18 @@ func main() {
 func Create(params PolarParams) {
 
 	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, 512, 512)
-	surface.SetLineWidth(1)
+
 	//surface.SetLineJoin(cairo.LINE_JOIN_ROUND)
 
+	surface.SetLineWidth(1.0)
+	surface.SetSourceRGB(0.5, 0.5, 0.5)
+	//surface.SetSourceRGB(0, 0, 0)
 	DrawAxes(surface)
 
 	surface.SetLineWidth(2)
 	surface.SetSourceRGB(0.5, 0, 0)
-
 	PolarDraw(surface, params)
+
 	fileName := fmt.Sprintf("polar-%s.png", params.Name)
 	surface.WriteToPNG(fileName)
 	surface.Finish()
@@ -152,9 +155,9 @@ func DrawAxes(surface *cairo.Surface) {
 		y0 = float64(surface.GetHeight()) * 0.5
 	)
 
-	rd := float64(50)
+	rd := float64(40)
 
-	k := 5
+	k := 6
 
 	m := 40
 
@@ -181,7 +184,7 @@ func DrawAxes(surface *cairo.Surface) {
 		}
 	}
 
-	n := 16
+	n := 32
 
 	du = 2 * math.Pi / float64(n)
 
