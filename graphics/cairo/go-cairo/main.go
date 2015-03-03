@@ -66,6 +66,19 @@ var (
 			Step: 0.01,
 		},
 	}
+
+	custom2 = PolarParams{
+		Name:  "custom2",
+		Scale: 200,
+		GetRadius: func(angle float64) float64 {
+			return math.Sin(angle*2) - 0.5*math.Sin(angle*4)
+		},
+		Angle: AngleSets{
+			Min:  0,
+			Max:  math.Pi * 20,
+			Step: 0.01,
+		},
+	}
 )
 
 func main() {
@@ -82,6 +95,8 @@ func main() {
 	for _, p := range ps {
 		Create(p)
 	}
+
+	//Create(custom2)
 }
 
 func Create(params PolarParams) {
