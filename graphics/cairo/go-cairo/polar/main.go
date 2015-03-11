@@ -1,14 +1,17 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math"
+	"os"
+	"path/filepath"
 
 	"github.com/ungerik/go-cairo"
 )
 
-var (
-	spiral = PolarParams{
+var ps = []PolarParams{
+	PolarParams{
 		Name:  "spiral",
 		Scale: 5,
 		GetRadius: func(angle float64) float64 {
@@ -19,9 +22,8 @@ var (
 			Max:  math.Pi * 10,
 			Step: 0.1,
 		},
-	}
-
-	cardioid = PolarParams{
+	},
+	PolarParams{
 		Name:  "cardioid",
 		Scale: 200,
 		GetRadius: func(angle float64) float64 {
@@ -32,19 +34,16 @@ var (
 			Max:  math.Pi * 2,
 			Step: 0.01,
 		},
-	}
-
-	lemniscate = PolarParams{
+	},
+	PolarParams{
 		Name:  "lemniscate",
 		Scale: 2,
 		GetRadius: func(angle float64) float64 {
-
 			const a = 100
 			c := math.Cos(2 * angle)
 			if c < 0 {
 				return 0
 			}
-
 			return math.Sqrt(a * a * c)
 		},
 		Angle: AngleSets{
@@ -52,9 +51,8 @@ var (
 			Max:  math.Pi*2 + 0.1,
 			Step: math.Pi / 100,
 		},
-	}
-
-	custom = PolarParams{
+	},
+	PolarParams{
 		Name:  "custom",
 		Scale: 200,
 		GetRadius: func(angle float64) float64 {
@@ -65,9 +63,8 @@ var (
 			Max:  math.Pi * 20,
 			Step: 0.01,
 		},
-	}
-
-	custom2 = PolarParams{
+	},
+	PolarParams{
 		Name:  "custom2",
 		Scale: 200,
 		GetRadius: func(angle float64) float64 {
@@ -78,28 +75,45 @@ var (
 			Max:  math.Pi * 20,
 			Step: 0.01,
 		},
-	}
-)
+	},
+}
 
 func main() {
 
 	//CairoHelloWorld()
 
-	ps := []PolarParams{
-		spiral,
-		cardioid,
-		lemniscate,
-		custom,
+	path := os.Args[0]
+	dir, _ := filepath.Split(path)
+	dir = filepath.Join(dir, "test")
+
+	err := makeDir(dir)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
 	}
 
 	for _, p := range ps {
-		Create(p)
+		Create(dir, p)
 	}
-
-	//Create(custom2)
 }
 
-func Create(params PolarParams) {
+func makeDir(dir string) error {
+
+	fi, err := os.Stat(dir)
+	if err != nil {
+		err = os.Mkdir(dir, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	} else {
+		if !fi.IsDir() {
+			return errors.New("file is not dir")
+		}
+	}
+	return nil
+}
+
+func Create(dir string, params PolarParams) {
 
 	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, 512, 512)
 
@@ -114,7 +128,8 @@ func Create(params PolarParams) {
 	surface.SetSourceRGB(0.5, 0, 0)
 	PolarDraw(surface, params)
 
-	fileName := fmt.Sprintf("polar-%s.png", params.Name)
+	fileName := filepath.Join(dir, fmt.Sprintf("polar-%s.png", params.Name))
+
 	surface.WriteToPNG(fileName)
 	surface.Finish()
 }

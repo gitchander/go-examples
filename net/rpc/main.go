@@ -44,6 +44,7 @@ func client() {
 		fmt.Printf("Server.Negate(%d) = %d", param, result)
 	}
 }
+
 func main() {
 	go server()
 	go client()
