@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/ungerik/go-cairo"
+	"fmt"
+
+	"github.com/gitchander/go-examples/cairo"
 
 	"github.com/gitchander/heuristic/math/graph2d"
 	"github.com/gitchander/heuristic/math/hexm"
@@ -21,8 +23,21 @@ func main() {
 
 	const cellRadius = float32(56.2)
 
-	texture := cairo.NewSurfaceFromPNG("./hexagone-gray.png")
+	texture, status := cairo.NewSurfaceFromPNG("./hexagone-gray.png")
+	if status != cairo.STATUS_SUCCESS {
+		fmt.Println(status)
+		return
+	}
+
 	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, 512, 512)
+	defer surface.Destroy()
+
+	c, status := cairo.NewCanvas(surface)
+	if status != cairo.STATUS_SUCCESS {
+		fmt.Println(cairo.StatusToString(status))
+		return
+	}
+	defer c.Destroy()
 
 	shift := getCenter(surface).Sub(getCenter(texture))
 
@@ -34,8 +49,8 @@ func main() {
 		v = v.MulScalar(cellRadius)
 		v = v.Add(shift)
 
-		surface.SetSourceSurface(texture, float64(v.X), float64(v.Y))
-		surface.Paint()
+		c.SetSourceSurface(texture, float64(v.X), float64(v.Y))
+		c.Paint()
 	}
 
 	surface.WriteToPNG("./test.png")

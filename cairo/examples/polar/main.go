@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ungerik/go-cairo"
+	"github.com/gitchander/go-examples/cairo"
 )
 
 var ps = []PolarParams{
@@ -53,6 +53,39 @@ var ps = []PolarParams{
 		},
 	},
 	PolarParams{
+		Name:  "cannabis",
+		Scale: 200,
+		GetRadius: func(angle float64) float64 {
+
+			a := 0.3
+			return a * (1.0 + 9.0/10.0*math.Cos(8.0*angle)) * (1.0 + 1.0/10.0*math.Cos(24.0*angle)) * (9.0/10.0 + 1.0/10.0*math.Cos(200.0*angle)) * (1.0 + math.Sin(angle))
+		},
+		Angle: AngleSets{
+			Min:  0,
+			Max:  math.Pi * 2,
+			Step: 0.01,
+		},
+	},
+	PolarParams{
+		Name:  "ellipse",
+		Scale: 200,
+		GetRadius: func(angle float64) float64 {
+
+			var (
+				a = 0.7
+				e = 0.6
+				l = a * (1 - e*e)
+			)
+
+			return l / (1.0 - e*math.Cos(angle))
+		},
+		Angle: AngleSets{
+			Min:  0,
+			Max:  math.Pi * 2,
+			Step: 0.01,
+		},
+	},
+	PolarParams{
 		Name:  "custom",
 		Scale: 200,
 		GetRadius: func(angle float64) float64 {
@@ -60,41 +93,10 @@ var ps = []PolarParams{
 		},
 		Angle: AngleSets{
 			Min:  0,
-			Max:  math.Pi * 20,
+			Max:  math.Pi * 2,
 			Step: 0.01,
 		},
 	},
-	PolarParams{
-		Name:  "custom2",
-		Scale: 200,
-		GetRadius: func(angle float64) float64 {
-			return math.Sin(angle*2) - 0.5*math.Sin(angle*4)
-		},
-		Angle: AngleSets{
-			Min:  0,
-			Max:  math.Pi * 20,
-			Step: 0.01,
-		},
-	},
-}
-
-func main() {
-
-	//CairoHelloWorld()
-
-	path := os.Args[0]
-	dir, _ := filepath.Split(path)
-	dir = filepath.Join(dir, "test")
-
-	err := makeDir(dir)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	for _, p := range ps {
-		Create(dir, p)
-	}
 }
 
 func makeDir(dir string) error {
@@ -115,18 +117,20 @@ func makeDir(dir string) error {
 
 func Create(dir string, params PolarParams) {
 
-	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, 512, 512)
+	width, height := 512, 512
 
-	//surface.SetLineJoin(cairo.LINE_JOIN_ROUND)
+	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, width, height)
+	canvas, _ := cairo.NewCanvas(surface)
 
-	surface.SetLineWidth(1.0)
-	surface.SetSourceRGB(0.5, 0.5, 0.5)
-	//surface.SetSourceRGB(0, 0, 0)
-	DrawAxes(surface)
+	canvas.SetLineJoin(cairo.LINE_JOIN_ROUND)
 
-	surface.SetLineWidth(2)
-	surface.SetSourceRGB(0.5, 0, 0)
-	PolarDraw(surface, params)
+	canvas.SetLineWidth(1.0)
+	canvas.SetSourceRGB(0.5, 0.5, 0.5)
+	DrawAxes(canvas, width, height)
+
+	canvas.SetLineWidth(2)
+	canvas.SetSourceRGB(0.5, 0, 0)
+	PolarDraw(canvas, width, height, params)
 
 	fileName := filepath.Join(dir, fmt.Sprintf("polar-%s.png", params.Name))
 
@@ -178,11 +182,11 @@ func PolarToDecart(polar Polar) Decart {
 	return Decart{x, y}
 }
 
-func DrawAxes(surface *cairo.Surface) {
+func DrawAxes(canvas *cairo.Canvas, width, height int) {
 
 	var (
-		x0 = float64(surface.GetWidth()) * 0.5
-		y0 = float64(surface.GetHeight()) * 0.5
+		x0 = float64(width) * 0.5
+		y0 = float64(height) * 0.5
 	)
 
 	rd := float64(40)
@@ -205,9 +209,9 @@ func DrawAxes(surface *cairo.Surface) {
 			y := y0 + r*s
 
 			if j == 0 {
-				surface.MoveTo(x, y)
+				canvas.MoveTo(x, y)
 			} else {
-				surface.LineTo(x, y)
+				canvas.LineTo(x, y)
 			}
 
 			u += du
@@ -227,23 +231,23 @@ func DrawAxes(surface *cairo.Surface) {
 		x := x0 + r*c
 		y := y0 + r*s
 
-		surface.MoveTo(x0, y0)
-		surface.LineTo(x, y)
+		canvas.MoveTo(x0, y0)
+		canvas.LineTo(x, y)
 
 		u += du
 	}
 
-	surface.Stroke()
+	canvas.Stroke()
 }
 
-func PolarDraw(surface *cairo.Surface, params PolarParams) {
+func PolarDraw(canvas *cairo.Canvas, width, height int, params PolarParams) {
 
 	var (
 		x, y float64
 
 		center = Decart{
-			X: float64(surface.GetWidth()) * 0.5,
-			Y: float64(surface.GetHeight()) * 0.5,
+			X: float64(width) * 0.5,
+			Y: float64(height) * 0.5,
 		}
 
 		p = Polar{Phi: params.Angle.Min}
@@ -268,24 +272,33 @@ func PolarDraw(surface *cairo.Surface, params PolarParams) {
 	}
 
 	if step() {
-		surface.MoveTo(x, y)
+		canvas.MoveTo(x, y)
 		for step() {
-			surface.LineTo(x, y)
+			canvas.LineTo(x, y)
 		}
 	}
 
-	surface.Stroke()
-	//surface.Fill()
+	canvas.Stroke()
+	//canvas.Fill()
 }
 
-func CairoHelloWorld() {
+func main() {
 
-	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, 240, 80)
-	surface.SelectFontFace("serif", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-	surface.SetFontSize(32.0)
-	surface.SetSourceRGB(0.1, 0.1, 0.2)
-	surface.MoveTo(10.0, 50.0)
-	surface.ShowText("Hello World")
-	surface.WriteToPNG("hello-world.png")
-	surface.Finish()
+	//CairoHelloWorld()
+
+	path := os.Args[0]
+	dir, _ := filepath.Split(path)
+	dir = filepath.Join(dir, "test")
+
+	err := makeDir(dir)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	for _, p := range ps {
+		Create(dir, p)
+	}
+
+	//Create(dir, ps[4])
 }
