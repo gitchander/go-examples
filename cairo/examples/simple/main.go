@@ -49,6 +49,15 @@ func (e *Example) Execute() cairo.Status {
 	}
 	defer canvas.Destroy()
 
+	// fill canvas white
+	{
+		canvas.Save()
+		canvas.SetSourceRGB(1.0, 1.0, 1.0)
+		canvas.Rectangle(0.0, 0.0, float64(e.Size.Width), float64(e.Size.Height))
+		canvas.Fill()
+		canvas.Restore()
+	}
+
 	e.SampleFunc(canvas)
 
 	return surface.WriteToPNG(fileName)
@@ -68,6 +77,15 @@ func makeDir(dir string) error {
 		}
 	}
 	return nil
+}
+
+func ExampleHelloWorld(c *cairo.Canvas) {
+
+	c.SelectFontFace("serif", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+	c.SetFontSize(32.0)
+	c.SetSourceRGB(0.0, 0.0, 0.7)
+	c.MoveTo(20.0, 140.0)
+	c.ShowText("Hello World")
 }
 
 func ExampleArc(c *cairo.Canvas) {
@@ -617,15 +635,6 @@ func ExampleTextExtents(c *cairo.Canvas) {
 	c.Stroke()
 }
 
-func ExampleHelloWorld(c *cairo.Canvas) {
-
-	c.SelectFontFace("serif", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-	c.SetFontSize(32.0)
-	c.SetSourceRGB(0.0, 0.0, 0.7)
-	c.MoveTo(20.0, 140.0)
-	c.ShowText("Hello World")
-}
-
 func main() {
 
 	var (
@@ -639,6 +648,7 @@ func main() {
 	}
 
 	es := []Example{
+		Example{ExampleHelloWorld, dir, "example-hello-world.png", size},
 		Example{ExampleArc, dir, "example-arc.png", size},
 		Example{ExampleArcNegative, dir, "example-arc-negative.png", size},
 		Example{ExampleClip, dir, "example-clip.png", size},
@@ -659,7 +669,6 @@ func main() {
 		Example{ExampleText, dir, "example-text.png", size},
 		Example{ExampleTextAlignCenter, dir, "example-text-align-center.png", size},
 		Example{ExampleTextExtents, dir, "example-text-extents.png", size},
-		Example{ExampleHelloWorld, dir, "example-hello-world.png", size},
 	}
 
 	for _, e := range es {
