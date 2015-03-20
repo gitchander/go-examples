@@ -57,7 +57,7 @@ type PolarCurve struct {
 	Ranges        []Range
 }
 
-var ps = []PolarCurve{
+var curves = []PolarCurve{
 	PolarCurve{
 		Name:  "spiral",
 		Scale: 7,
@@ -96,13 +96,19 @@ var ps = []PolarCurve{
 	},
 	PolarCurve{
 		Name:  "cannabis",
-		Scale: 200,
+		Scale: 50,
 		RadiusByAngle: func(angle float64) float64 {
-			a := 0.3
-			return a * (1.0 + 9.0/10.0*math.Cos(8.0*angle)) * (1.0 + 1.0/10.0*math.Cos(24.0*angle)) * (9.0/10.0 + 1.0/10.0*math.Cos(200.0*angle)) * (1.0 + math.Sin(angle))
+
+			const a = 1.0
+			cannabis := a * (1.0 + 9.0/10.0*math.Cos(8.0*angle)) *
+				(1.0 + 1.0/10.0*math.Cos(24.0*angle)) *
+				(9.0/10.0 + 1.0/10.0*math.Cos(200.0*angle)) *
+				(1.0 + math.Sin(angle))
+
+			return -cannabis
 		},
 		Ranges: []Range{
-			Range{Min: 0, Max: math.Pi * 2, Count: 1000},
+			Range{Min: 0, Max: 2.0 * math.Pi, Count: 1000},
 		},
 	},
 	PolarCurve{
@@ -132,6 +138,77 @@ var ps = []PolarCurve{
 			Range{Min: 0, Max: math.Pi, Count: 100},
 		},
 	},
+	PolarCurve{
+		Name:  "circle",
+		Scale: 100,
+		RadiusByAngle: func(angle float64) float64 {
+
+			sin := math.Sin(angle)
+
+			a := 1.0 // radius
+			circle := 2.0 * a * sin
+
+			return -circle
+		},
+		Ranges: []Range{
+			Range{Min: 0, Max: 2.0 * math.Pi, Count: 100},
+		},
+	},
+	PolarCurve{
+		Name:  "strofoid",
+		Scale: 100,
+		RadiusByAngle: func(angle float64) float64 {
+
+			const b = 1.0
+			strofoid := b * (1.0 + math.Cos(angle)) / math.Sin(angle)
+			return -strofoid
+		},
+		Ranges: []Range{
+			Range{Min: math.Pi - 2.2, Max: math.Pi + 2.2, Count: 100},
+		},
+	},
+	PolarCurve{
+		Name:  "strofoid-knot",
+		Scale: 200,
+		RadiusByAngle: func(angle float64) float64 {
+
+			sin, cos := math.Sincos(angle)
+
+			a := 1.0 // radius
+			circle := 2.0 * a * sin
+
+			b := a * 2.0
+			strofoid := b * (1.0 + cos) / sin
+
+			knot := circle - strofoid
+
+			return -knot
+		},
+		Ranges: []Range{
+			Range{Min: math.Pi - 2.0, Max: math.Pi + 2.0, Count: 100},
+		},
+	},
+	PolarCurve{
+		Name:  "parabola-knot",
+		Scale: 200,
+		RadiusByAngle: func(angle float64) float64 {
+
+			sin, cos := math.Sincos(angle)
+
+			a := 1.0 // radius
+			circle := 2.0 * a * sin
+
+			p := a / 4.0
+			parabola := 2.0 * p * sin / (cos * cos)
+
+			knot := circle - parabola
+
+			return -knot
+		},
+		Ranges: []Range{
+			Range{Min: math.Pi - 1.16, Max: math.Pi + 1.16, Count: 100},
+		},
+	},
 }
 
 func makeDir(dir string) error {
@@ -150,19 +227,26 @@ func makeDir(dir string) error {
 	return nil
 }
 
-func Create(dir string, params PolarCurve) {
+func makeCurve(dir string, params PolarCurve) cairo.Status {
 
 	width, height := 512, 512
 
 	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, width, height)
-	canvas, _ := cairo.NewCanvas(surface)
+	canvas, status := cairo.NewCanvas(surface)
+	if status != cairo.STATUS_SUCCESS {
+		return status
+	}
+
+	// fill white
+	{
+		canvas.Save()
+		canvas.SetSourceRGB(1.0, 1.0, 1.0)
+		canvas.Rectangle(0.0, 0.0, float64(width), float64(height))
+		canvas.Fill()
+		canvas.Restore()
+	}
 
 	canvas.SetLineJoin(cairo.LINE_JOIN_ROUND)
-
-	canvas.SetSourceRGB(1.0, 1.0, 1.0)
-	canvas.Rectangle(0.0, 0.0, float64(width), float64(height))
-	canvas.Fill()
-
 	canvas.SetLineWidth(1.0)
 	canvas.SetSourceRGB(0.7, 0.7, 0.7)
 	DrawAxes(canvas, width, height)
@@ -175,6 +259,8 @@ func Create(dir string, params PolarCurve) {
 
 	surface.WriteToPNG(fileName)
 	surface.Finish()
+
+	return cairo.STATUS_SUCCESS
 }
 
 func DrawAxes(canvas *cairo.Canvas, width, height int) {
@@ -291,7 +377,11 @@ func main() {
 		return
 	}
 
-	for _, p := range ps {
-		Create(dir, p)
+	for _, curve := range curves {
+		status := makeCurve(dir, curve)
+		if status != cairo.STATUS_SUCCESS {
+			fmt.Println(cairo.StatusToString(status))
+			break
+		}
 	}
 }
