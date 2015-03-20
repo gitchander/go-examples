@@ -71,6 +71,7 @@ func (m *Matrix) TransformDistance(dx, dy float64) (float64, float64) {
 	)
 
 	C.cairo_matrix_transform_distance(m.native(), &x0, &y0)
+
 	return float64(x0), float64(y0)
 }
 
@@ -82,5 +83,6 @@ func (m *Matrix) TransformPoint(x, y float64) (float64, float64) {
 	)
 
 	C.cairo_matrix_transform_point(m.native(), &x0, &y0)
+
 	return float64(x0), float64(y0)
 }

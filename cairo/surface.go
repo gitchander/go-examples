@@ -23,6 +23,10 @@ func (s *Surface) native() *C.cairo_surface_t {
 	return s.surface
 }
 
+func (s *Surface) Native() uintptr {
+	return uintptr(unsafe.Pointer(s.native()))
+}
+
 func NewSurface(format Format, width, height int) *Surface {
 
 	surfaceNative := C.cairo_image_surface_create(C.cairo_format_t(format), C.int(width), C.int(height))

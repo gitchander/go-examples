@@ -36,6 +36,11 @@ func NewPatternForSurface(s *Surface) *Pattern {
 	return &Pattern{p}
 }
 
+func (p *Pattern) Reference() *Pattern {
+	reference := C.cairo_pattern_reference(p.native())
+	return &Pattern{reference}
+}
+
 func (p *Pattern) Destroy() {
 	C.cairo_pattern_destroy(p.native())
 }

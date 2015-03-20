@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/gitchander/go-examples/cairo"
+	cairoUtil "github.com/gitchander/go-examples/cairo/util"
 )
 
 const (
@@ -49,14 +50,7 @@ func (e *Example) Execute() cairo.Status {
 	}
 	defer canvas.Destroy()
 
-	// fill canvas white
-	{
-		canvas.Save()
-		canvas.SetSourceRGB(1.0, 1.0, 1.0)
-		canvas.Rectangle(0.0, 0.0, float64(e.Size.Width), float64(e.Size.Height))
-		canvas.Fill()
-		canvas.Restore()
-	}
+	cairoUtil.CanvasFill(canvas, cairoUtil.ColorRGB{1.0, 1.0, 1.0})
 
 	e.SampleFunc(canvas)
 
