@@ -238,6 +238,10 @@ type TextExtents struct {
 
 func (c *Canvas) TextExtents(text string, textExtents *TextExtents) {
 
+	if textExtents == nil {
+		return
+	}
+
 	cstr := C.CString(text)
 	defer C.free(unsafe.Pointer(cstr))
 
