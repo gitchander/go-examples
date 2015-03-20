@@ -34,6 +34,17 @@ func NewCanvas(s *Surface) (*Canvas, Status) {
 	return &Canvas{canvasNative}, STATUS_SUCCESS
 }
 
+func NewCanvasNative(ptr uintptr) (*Canvas, Status) {
+
+	canvasNative := (*C.cairo_t)(unsafe.Pointer(ptr))
+	status := Status(C.cairo_status(canvasNative))
+	if status != STATUS_SUCCESS {
+		return nil, status
+	}
+
+	return &Canvas{canvasNative}, STATUS_SUCCESS
+}
+
 func (c *Canvas) Destroy() {
 	C.cairo_destroy(c.native())
 }
