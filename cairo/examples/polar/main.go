@@ -140,7 +140,7 @@ func makeCurve(dir string, params PolarCurve) cairo.Status {
 		return status
 	}
 
-	cairoUtil.CanvasFill(canvas, cairoUtil.ColorRGB{1.0, 1.0, 1.0})
+	cairoUtil.CanvasFillRGB(canvas, cairoUtil.ColorRGB{1.0, 1.0, 1.0})
 
 	canvas.SetLineJoin(cairo.LINE_JOIN_ROUND)
 	canvas.SetLineWidth(1.0)

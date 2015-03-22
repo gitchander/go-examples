@@ -28,7 +28,11 @@ var normColorChannel = func(x float64) float64 {
 	return x
 }
 
-func CanvasFill(canvas *cairo.Canvas, color ColorRGB) {
+type ColorRGBA struct {
+	Red, Green, Blue, Alpha float64
+}
+
+func CanvasFillRGB(canvas *cairo.Canvas, color ColorRGB) {
 
 	surface := canvas.GetTarget()
 	if surface == nil {
@@ -37,7 +41,20 @@ func CanvasFill(canvas *cairo.Canvas, color ColorRGB) {
 
 	canvas.Save()
 	canvas.SetSourceRGB(color.Red, color.Green, color.Blue)
-	canvas.Rectangle(0.0, 0.0, float64(surface.GetWidth()), float64(surface.GetHeight()))
-	canvas.Fill()
+	canvas.Paint()
+	canvas.Restore()
+}
+
+func CanvasFillRGBA(canvas *cairo.Canvas, color ColorRGBA) {
+
+	surface := canvas.GetTarget()
+	if surface == nil {
+		return
+	}
+
+	canvas.Save()
+	canvas.SetSourceRGBA(color.Red, color.Green, color.Blue, color.Alpha)
+	canvas.SetOperator(cairo.OPERATOR_SOURCE)
+	canvas.Paint()
 	canvas.Restore()
 }

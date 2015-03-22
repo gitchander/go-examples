@@ -50,7 +50,7 @@ func (e *Example) Execute() cairo.Status {
 	}
 	defer canvas.Destroy()
 
-	cairoUtil.CanvasFill(canvas, cairoUtil.ColorRGB{1.0, 1.0, 1.0})
+	cairoUtil.CanvasFillRGB(canvas, cairoUtil.ColorRGB{1.0, 1.0, 1.0})
 
 	e.SampleFunc(canvas)
 
