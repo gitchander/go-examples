@@ -140,6 +140,11 @@ func (c *Canvas) GetAntialias() Antialias {
 
 func (c *Canvas) SetDash(dashes []float64, offset float64) {
 
+	if len(dashes) == 0 {
+		C.cairo_set_dash(c.native(), nil, 0, 0.0)
+		return
+	}
+
 	numDashes := C.int(len(dashes))
 	ptrDashes := (*C.double)(&dashes[0])
 

@@ -2,11 +2,13 @@ package cairo
 
 // #cgo pkg-config: cairo cairo-gobject
 // #include <stdlib.h>
+// #include <string.h>
 // #include <cairo.h>
 // #include <cairo-gobject.h>
 import "C"
 
 import (
+	"errors"
 	"unsafe"
 )
 
@@ -64,10 +66,72 @@ func (s *Surface) WriteToPNG(fileName string) Status {
 	return Status(C.cairo_surface_write_to_png(s.native(), cstr))
 }
 
+func (s *Surface) GetFormat() Format {
+	return Format(C.cairo_image_surface_get_format(s.native()))
+}
+
 func (s *Surface) GetWidth() int {
 	return int(C.cairo_image_surface_get_width(s.native()))
 }
 
 func (s *Surface) GetHeight() int {
 	return int(C.cairo_image_surface_get_height(s.native()))
+}
+
+func (s *Surface) GetStride() int {
+	return int(C.cairo_image_surface_get_stride(s.native()))
+}
+
+func (s *Surface) Flush() {
+	C.cairo_surface_flush(s.native())
+}
+
+func (s *Surface) MarkDirty() {
+	C.cairo_surface_mark_dirty(s.native())
+}
+
+func (s *Surface) GetDataLength() int {
+
+	stride := s.GetStride()
+	height := s.GetHeight()
+
+	return stride * height
+}
+
+func (s *Surface) GetData(data []byte) error {
+
+	dataLen := s.GetDataLength()
+	if len(data) != dataLen {
+		return errors.New("cairo.Surface.GetData(): invalid data size")
+	}
+
+	dataPtr := unsafe.Pointer(C.cairo_image_surface_get_data(s.native()))
+	if dataPtr == nil {
+		return errors.New("cairo.Surface.GetData(): can't access surface pixel data")
+	}
+
+	C.memcpy(unsafe.Pointer(&data[0]), dataPtr, C.size_t(dataLen))
+
+	return nil
+}
+
+func (s *Surface) SetData(data []byte) error {
+
+	dataLen := s.GetDataLength()
+	if len(data) != dataLen {
+		return errors.New("cairo.Surface.SetData(): invalid data size")
+	}
+
+	s.Flush()
+
+	dataPtr := unsafe.Pointer(C.cairo_image_surface_get_data(s.native()))
+	if dataPtr == nil {
+		return errors.New("cairo.Surface.SetData(): can't access surface pixel data")
+	}
+
+	C.memcpy(dataPtr, unsafe.Pointer(&data[0]), C.size_t(dataLen))
+
+	s.MarkDirty()
+
+	return nil
 }

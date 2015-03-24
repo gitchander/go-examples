@@ -60,9 +60,9 @@ func (e *EventButton) Pos() (x, y int) {
 */
 
 // https://developer.gnome.org/gdk3/stable/gdk3-Event-Structures.html#GdkEventButton
-//----------------
+//--------------------------------
 // GdkEventButton
-//----------------
+//--------------------------------
 type EventButton struct {
 	event *C.GdkEventButton
 }
@@ -83,4 +83,44 @@ func (e *EventButton) Pos() (x, y int) {
 	x = int(e.native().x)
 	y = int(e.native().y)
 	return
+}
+
+//--------------------------------
+/*
+struct GdkEventMotion {
+  GdkEventType type;
+  GdkWindow *window;
+  gint8 send_event;
+  guint32 time;
+  gdouble x;
+  gdouble y;
+  gdouble *axes;
+  guint state;
+  gint16 is_hint;
+  GdkDevice *device;
+  gdouble x_root, y_root;
+};
+*/
+//--------------------------------
+type EventMotion struct {
+	event *C.GdkEventMotion
+}
+
+func (e *EventMotion) native() *C.GdkEventMotion {
+	return e.event
+}
+
+func (e *EventMotion) FromNative(ptr uintptr) {
+	e.event = (*C.GdkEventMotion)(unsafe.Pointer(ptr))
+}
+
+func (e *EventMotion) Pos() (x, y int) {
+	x = int(e.native().x)
+	y = int(e.native().y)
+	return
+}
+
+func (e *EventMotion) State() int {
+
+	return int(e.native().state)
 }
