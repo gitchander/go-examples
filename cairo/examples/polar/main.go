@@ -64,7 +64,7 @@ var curves = []PolarCurve{
 		},
 	},
 	PolarCurve{
-		Curve: NewCardioid(200.0),
+		Curve: NewCardioid(100.0),
 		Ranges: []Range{
 			Range{Min: 0, Max: math.Pi * 2, Count: 100},
 		},
@@ -83,9 +83,21 @@ var curves = []PolarCurve{
 		},
 	},
 	PolarCurve{
-		Curve: NewTriList(200.0),
+		Curve: NewRose("cardioid-rose", 200.0, 0.5),
+		Ranges: []Range{
+			Range{Min: 0, Max: 2.0 * math.Pi, Count: 100},
+		},
+	},
+	PolarCurve{
+		Curve: NewRose("rose3", 200.0, 3.0),
 		Ranges: []Range{
 			Range{Min: 0, Max: math.Pi, Count: 100},
+		},
+	},
+	PolarCurve{
+		Curve: NewRose("rose2", 200.0, 2.0),
+		Ranges: []Range{
+			Range{Min: 0, Max: 2.0 * math.Pi, Count: 100},
 		},
 	},
 	PolarCurve{
@@ -114,7 +126,7 @@ var curves = []PolarCurve{
 	},
 }
 
-func makeDir(dir string) error {
+func mkDir(dir string) error {
 
 	fi, err := os.Stat(dir)
 	if err != nil {
@@ -267,11 +279,10 @@ func PolarDraw(canvas *cairo.Canvas, width, height int, params PolarCurve) {
 
 func main() {
 
-	path := os.Args[0]
-	dir, _ := filepath.Split(path)
+	dir := filepath.Dir(os.Args[0])
 	dir = filepath.Join(dir, "result")
 
-	err := makeDir(dir)
+	err := mkDir(dir)
 	if err != nil {
 		fmt.Println(err.Error())
 		return

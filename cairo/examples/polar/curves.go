@@ -9,6 +9,7 @@ type Curve interface {
 	RadiusByAngle(Angle float64) float64
 }
 
+//------------------------------------------------------
 type Spiral struct {
 	a float64
 }
@@ -25,6 +26,8 @@ func (this *Spiral) RadiusByAngle(Angle float64) float64 {
 	return this.a * Angle
 }
 
+//------------------------------------------------------
+// r= a * (1 - cos(angle))
 type Cardioid struct {
 	a float64
 }
@@ -38,9 +41,10 @@ func (this *Cardioid) Name() string {
 }
 
 func (this *Cardioid) RadiusByAngle(Angle float64) float64 {
-	return this.a * math.Sin(Angle*0.5)
+	return this.a * (1.0 - math.Cos(Angle))
 }
 
+//------------------------------------------------------
 type Lemniscate struct {
 	a float64
 }
@@ -62,6 +66,7 @@ func (this *Lemniscate) RadiusByAngle(Angle float64) float64 {
 	return math.Sqrt(this.a * this.a * c)
 }
 
+//------------------------------------------------------
 type Cannabis struct {
 	a float64
 }
@@ -82,22 +87,27 @@ func (this *Cannabis) RadiusByAngle(Angle float64) float64 {
 		(1.0 + math.Sin(Angle))
 }
 
-type TriList struct {
-	a float64
+//------------------------------------------------------
+// r= a * sin(k * angle)
+type Rose struct {
+	name string
+	a    float64
+	k    float64
 }
 
-func NewTriList(a float64) Curve {
-	return &TriList{a}
+func NewRose(s string, a, k float64) Curve {
+	return &Rose{s, a, k}
 }
 
-func (this *TriList) Name() string {
-	return "trilist"
+func (this *Rose) Name() string {
+	return this.name
 }
 
-func (this *TriList) RadiusByAngle(Angle float64) float64 {
-	return this.a * math.Sin(Angle*3.0)
+func (this *Rose) RadiusByAngle(Angle float64) float64 {
+	return this.a * math.Sin(Angle*this.k)
 }
 
+//------------------------------------------------------
 type Circle struct {
 	a float64
 }
@@ -114,6 +124,7 @@ func (this *Circle) RadiusByAngle(Angle float64) float64 {
 	return 2.0 * this.a * math.Sin(Angle)
 }
 
+//------------------------------------------------------
 type Strofoid struct {
 	b float64
 }
@@ -135,6 +146,7 @@ func (this *Strofoid) RadiusByAngle(Angle float64) float64 {
 	return strofoid
 }
 
+//------------------------------------------------------
 type StrofoidKnot struct {
 	a, b float64
 }
@@ -161,6 +173,7 @@ func (this *StrofoidKnot) RadiusByAngle(Angle float64) float64 {
 	return knot
 }
 
+//------------------------------------------------------
 type ParabolaKnot struct {
 	a, p float64
 }

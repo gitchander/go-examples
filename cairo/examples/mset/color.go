@@ -107,14 +107,20 @@ func (this *ColorRGBA) Decode(bs []byte) error {
 	return nil
 }
 
-func (front *ColorRGBA) Over(back ColorRGBA) ColorRGBA {
+// Alpha blending
+// c = a over b
+func (a ColorRGBA) Over(b ColorRGBA) (c ColorRGBA) {
 
-	alpha := front.Alpha + back.Alpha*(1.0-front.Alpha)
-	invAlpha := 1.0 / alpha
+	aR, aG, aB, aA := a.Get()
+	bR, bG, bB, bA := b.Get()
 
-	red := (front.Red*front.Alpha + back.Red*(1.0-front.Alpha)) * invAlpha
-	green := (front.Green*front.Alpha + back.Green*(1.0-front.Alpha)) * invAlpha
-	blue := (front.Blue*front.Alpha + back.Blue*(1.0-front.Alpha)) * invAlpha
+	cA := aA + bA*(1.0-aA)
 
-	return ColorRGBA{red, green, blue, alpha}
+	cR := (aR*aA + bR*bA*(1.0-aA)) / cA
+	cG := (aG*aA + bG*bA*(1.0-aA)) / cA
+	cB := (aB*aA + bB*bA*(1.0-aA)) / cA
+
+	c.Set(cR, cG, cB, cA)
+
+	return
 }
