@@ -3,16 +3,16 @@ package main
 import "fmt"
 
 type Equaler interface {
-	Equal(Equaler) bool
+	Equal(interface{}) bool
 }
 
 type Point struct {
 	X, Y int
 }
 
-func (p *Point) Equal(e Equaler) bool {
+func (p *Point) Equal(v interface{}) bool {
 
-	q, ok := e.(*Point)
+	q, ok := v.(*Point)
 	if !ok {
 		return false
 	}
@@ -31,24 +31,24 @@ type Vertex struct {
 	X, Y int
 }
 
-func (v *Vertex) Equal(e Equaler) bool {
+func (p *Vertex) Equal(v interface{}) bool {
 
-	w, ok := e.(*Vertex)
+	q, ok := v.(*Vertex)
 	if !ok {
 		return false
 	}
 
-	if v.X != w.X {
+	if p.X != q.X {
 		return false
 	}
-	if v.Y != w.Y {
+	if p.Y != q.Y {
 		return false
 	}
 
 	return true
 }
 
-func equalSample(a, b Equaler) {
+func equalSamples(a, b Equaler) {
 
 	var s string
 
@@ -63,17 +63,18 @@ func equalSample(a, b Equaler) {
 
 func main() {
 
-	var a, b, c, d, e Equaler
+	var es = []Equaler{
+		&Point{12, 0},
+		&Point{-2, 14},
+		&Point{-2, 14},
+		&Vertex{12, 0},
+		&Vertex{12, 0},
+	}
 
-	a = &Point{12, 0}
-	b = &Point{-2, 14}
-	c = &Point{-2, 14}
-	d = &Vertex{12, 0}
-	e = &Vertex{12, 0}
-
-	equalSample(a, b)
-	equalSample(b, c)
-	equalSample(c, a)
-	equalSample(a, d)
-	equalSample(d, e)
+	n := len(es)
+	for i := 0; i < n; i++ {
+		for j := 0; j < n; j++ {
+			equalSamples(es[i], es[j])
+		}
+	}
 }

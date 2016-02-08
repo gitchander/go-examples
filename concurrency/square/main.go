@@ -28,8 +28,6 @@ func sq(in <-chan int) <-chan int {
 
 func main() {
 
-	// http://4gophers.com/article/modeli-konkurentnosti-v-go#.VJSrOLAQA
-
 	in := gen(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
 	out := sq(sq(in))
 

@@ -1,19 +1,19 @@
-package cloner
+package main
 
-import (
-	"fmt"
-	"testing"
-)
+import "fmt"
+
+type Cloner interface {
+	Clone() Cloner
+}
 
 type Alpha struct {
 	Id      int
 	Message string
 }
 
-func (this *Alpha) Clone() Cloner {
-
-	cloned := *this
-	return &cloned
+func (a *Alpha) Clone() Cloner {
+	c := *a
+	return &c
 }
 
 type Betha struct {
@@ -21,21 +21,20 @@ type Betha struct {
 	Position int
 }
 
-func (this *Betha) Clone() Cloner {
-
-	cloned := *this
-	return &cloned
+func (b *Betha) Clone() Cloner {
+	c := *b
+	return &c
 }
 
-func TestCloner(t *testing.T) {
+func main() {
 
 	a := Alpha{
 		Id:      345,
-		Message: "Message",
+		Message: "message for alpha",
 	}
 
 	b := Betha{
-		Name:     "asduqweruwisg",
+		Name:     "name betha",
 		Position: 23534,
 	}
 
