@@ -28,7 +28,6 @@ func BigFibb() func() *big.Int {
 }
 
 func main() {
-
 	next := BigFibb()
 	for i := 0; i < 1000; i++ {
 		fmt.Printf("%s\n", next())
