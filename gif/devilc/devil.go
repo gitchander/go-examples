@@ -26,12 +26,12 @@ func devilCalcFunc(aa, bb float64, t float64) Point {
 	}
 }
 
-func getDevilCalcFunc(center Point, a, b float64) CalcFunc {
+func getDevilCalcFunc(a, b float64) CalcFunc {
 	var (
 		aa = a * a
 		bb = b * b
 	)
 	return func(t float64) Point {
-		return devilCalcFunc(aa, bb, t).Add(center)
+		return devilCalcFunc(aa, bb, t)
 	}
 }

@@ -35,12 +35,19 @@ func renderScene(canvas *cairo.Canvas, width, height int, a, b float64) {
 
 	canvasSetColor(canvas, color.RGBA{255, 0, 0, 255})
 	canvas.SetLineWidth(2)
-	drawDevilCurve(canvas, Point{x0, y0}, a, b)
+
+	m := cairo.NewMatrix()
+	m.InitIdendity()
+	m.Translate(x0, y0)
+	canvas.Save()
+	canvas.SetMatrix(m)
+	drawDevilCurve(canvas, a, b)
+	canvas.Restore()
 }
 
-func drawDevilCurve(canvas *cairo.Canvas, center Point, a, b float64) {
+func drawDevilCurve(canvas *cairo.Canvas, a, b float64) {
 
-	cf := getDevilCalcFunc(center, a, b)
+	cf := getDevilCalcFunc(a, b)
 
 	const (
 		piDiv4 = math.Pi / 4
