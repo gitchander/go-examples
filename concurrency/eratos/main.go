@@ -1,31 +1,36 @@
-// Sieve of Eratosthenes
 package main
 
 import "fmt"
 
-func generate(ch chan<- int) {
-	for i := 2; ; i++ {
-		ch <- i
-	}
-}
-
-func filter(in <-chan int, out chan<- int, prime int) {
-	for {
-		i := <-in
-		if i%prime != 0 {
-			out <- i
+func makeGenerator() <-chan int {
+	c := make(chan int)
+	go func() {
+		for i := 2; ; i++ {
+			c <- i
 		}
-	}
+	}()
+	return c
 }
 
+func addFilter(in <-chan int, prime int) <-chan int {
+	out := make(chan int)
+	go func() {
+		for {
+			i := <-in
+			if i%prime != 0 {
+				out <- i
+			}
+		}
+	}()
+	return out
+}
+
+// Sieve of Eratosthenes
 func main() {
-	ch := make(chan int)
-	go generate(ch)
+	c := makeGenerator()
 	for i := 0; i < 100; i++ {
-		prime := <-ch
-		ch1 := make(chan int)
-		go filter(ch, ch1, prime)
-		ch = ch1
+		prime := <-c
+		c = addFilter(c, prime)
 		fmt.Println(prime)
 	}
 }
