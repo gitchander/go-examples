@@ -3,7 +3,9 @@ package main
 import "fmt"
 
 type Cloner interface {
-	Clone() Cloner
+	// Clone() Cloner // Необходимо иметь зависимость
+
+	Clone() interface{} // Метод не имеет зависимости
 }
 
 type Alpha struct {
@@ -11,9 +13,9 @@ type Alpha struct {
 	Message string
 }
 
-func (a *Alpha) Clone() Cloner {
-	c := *a
-	return &c
+func (a Alpha) Clone() interface{} {
+	c := a
+	return c
 }
 
 type Betha struct {
@@ -21,9 +23,9 @@ type Betha struct {
 	Position int
 }
 
-func (b *Betha) Clone() Cloner {
-	c := *b
-	return &c
+func (b Betha) Clone() interface{} {
+	c := b
+	return c
 }
 
 func main() {
@@ -38,7 +40,7 @@ func main() {
 		Position: 23534,
 	}
 
-	var cs = []Cloner{&a, &b}
+	var cs = []Cloner{a, b}
 
 	for _, c := range cs {
 		clone := c.Clone()

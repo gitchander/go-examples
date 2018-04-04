@@ -7,11 +7,6 @@ import (
 
 func main() {
 
-	ExampleIteration()
-}
-
-func ExampleIteration() {
-
 	var x list.List
 
 	for i := 0; i < 10; i++ {

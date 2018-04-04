@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gitchander/go-examples/cairo"
+	"github.com/gitchander/cairo"
 
 	"github.com/gitchander/heuristic/math/graph2d"
 	"github.com/gitchander/heuristic/math/hexm"
