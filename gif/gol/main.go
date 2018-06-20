@@ -18,7 +18,7 @@ func main() {
 
 func renderFile(params RenderParams) {
 
-	t := life.NewTorus(params.Size.Dx, params.Size.Dy)
+	t := life.NewTorus(params.Size)
 
 	ps := PointsFromPattern(params.Pattern)
 	life.Points(ps).Move(params.Loc)
@@ -101,17 +101,12 @@ func fillRect(ip *image.Paletted, indexColor uint8, r image.Rectangle) {
 }
 
 type RenderParams struct {
-	Size       Size
+	Size       life.Point
 	FrameCount int
 	Pattern    Pattern
 	Loc        life.Point
 	Scale      int
 	Delay      int
-}
-
-type Size struct {
-	Dx int
-	Dy int
 }
 
 func SetPoints(t *life.Torus, ps life.Points) {
@@ -122,7 +117,7 @@ func SetPoints(t *life.Torus, ps life.Points) {
 
 var pars = []RenderParams{
 	RenderParams{
-		Size:       Size{Dx: 15, Dy: 15},
+		Size:       life.Point{X: 15, Y: 15},
 		FrameCount: 8,
 		Pattern:    patternGalaxy,
 		Loc:        life.Point{3, 3},
@@ -130,7 +125,7 @@ var pars = []RenderParams{
 		Delay:      8,
 	},
 	RenderParams{
-		Size:       Size{Dx: 42, Dy: 28},
+		Size:       life.Point{X: 42, Y: 28},
 		FrameCount: 30,
 		Pattern:    patternGliderGun,
 		Loc:        life.Point{3, 3},

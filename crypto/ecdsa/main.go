@@ -22,7 +22,6 @@ func main() {
 func Example1() error {
 
 	// Generate private key
-
 	ellipticCurve := elliptic.P256()
 
 	privateKey, err := ecdsa.GenerateKey(ellipticCurve, rand.Reader)
@@ -31,8 +30,6 @@ func Example1() error {
 	}
 
 	publicKey := privateKey.PublicKey
-
-	//--------------------------------
 
 	data := []byte("This is a message to be signed and verified by ECDSA!")
 

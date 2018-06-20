@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 type Cloner interface {
-	// Clone() Cloner // Необходимо иметь зависимость
+	// Clone() Cloner // It has dependency
 
-	Clone() interface{} // Метод не имеет зависимости
+	Clone() interface{} // It hasn't dependency
 }
 
 type Alpha struct {

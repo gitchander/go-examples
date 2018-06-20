@@ -9,17 +9,22 @@ import (
 
 func main() {
 
-	file, err := ioutil.TempFile("", "example_tmp_file")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.Remove(file.Name())
-	defer file.Close()
+	file, err := ioutil.TempFile("", "test_tmp_")
+	checkError(err)
+	defer func() {
+		checkError(file.Close())
+		checkError(os.Remove(file.Name()))
+	}()
 
 	fmt.Println("create temp file:", file.Name())
 
 	body := []byte("temp file body")
-	if _, err = file.Write(body); err != nil {
+	_, err = file.Write(body)
+	checkError(err)
+}
+
+func checkError(err error) {
+	if err != nil {
 		log.Fatal(err)
 	}
 }

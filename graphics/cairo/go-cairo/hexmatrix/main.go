@@ -1,58 +1,55 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/gitchander/cairo"
-
-	"github.com/gitchander/heuristic/math/graph2d"
 	"github.com/gitchander/heuristic/math/hexm"
 )
 
-func getCenter(surface *cairo.Surface) graph2d.Vector {
-	return graph2d.Vector{
-		float32(surface.GetWidth()) * 0.5,
-		float32(surface.GetHeight()) * 0.5,
+func main() {
+
+	m := hexm.NewMatrix(hexm.Coord{X: 3, Y: 3, Z: 3})
+
+	const cellRadius = 56.2
+
+	texture, err := cairo.NewSurfaceFromPNG("hexagone.png")
+	checkError(err)
+	defer texture.Destroy()
+
+	surface, err := cairo.NewSurface(cairo.FORMAT_ARGB32, 512, 512)
+	checkError(err)
+	defer surface.Destroy()
+
+	canvas, err := cairo.NewCanvas(surface)
+	checkError(err)
+	defer canvas.Destroy()
+
+	shift := getCenter(surface).Sub(getCenter(texture))
+	for I := hexm.NewIterator(m); I.HasValue(); I.Next() {
+		coord := I.Coord()
+		v := hexm.CoordToVector(hexm.Flat, coord)
+		v = v.MulScalar(cellRadius)
+		v = v.Add(shift)
+		canvas.SetSourceSurface(texture, v.X, v.Y)
+		canvas.Paint()
+	}
+
+	err = surface.WriteToPNG("result.png")
+	checkError(err)
+
+	surface.Finish()
+}
+
+func getCenter(surface *cairo.Surface) hexm.Vector {
+	return hexm.Vector{
+		float64(surface.GetWidth()) * 0.5,
+		float64(surface.GetHeight()) * 0.5,
 	}
 }
 
-func main() {
-
-	mSize, _ := hexm.NewSize(3, 3, 3)
-	m := hexm.NewMatrix(mSize)
-
-	const cellRadius = float32(56.2)
-
-	texture, status := cairo.NewSurfaceFromPNG("./hexagone-gray.png")
-	if status != cairo.STATUS_SUCCESS {
-		fmt.Println(status)
-		return
+func checkError(err error) {
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	surface := cairo.NewSurface(cairo.FORMAT_ARGB32, 512, 512)
-	defer surface.Destroy()
-
-	c, status := cairo.NewCanvas(surface)
-	if status != cairo.STATUS_SUCCESS {
-		fmt.Println(cairo.StatusToString(status))
-		return
-	}
-	defer c.Destroy()
-
-	shift := getCenter(surface).Sub(getCenter(texture))
-
-	for I := m.NewIterator(); !I.Done(); I.Next() {
-
-		coord, _, _ := I.Current()
-
-		v := hexm.CoordToVector(coord)
-		v = v.MulScalar(cellRadius)
-		v = v.Add(shift)
-
-		c.SetSourceSurface(texture, float64(v.X), float64(v.Y))
-		c.Paint()
-	}
-
-	surface.WriteToPNG("./test.png")
-	surface.Finish()
 }

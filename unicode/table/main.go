@@ -1,8 +1,9 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -14,36 +15,30 @@ func GenerateUnicodeTable(fileName string, runeMin, runeMax rune) error {
 	}
 	defer f.Close()
 
-	buffer := new(bytes.Buffer)
+	bw := bufio.NewWriter(f)
+	defer bw.Flush()
 
-	r := runeMin
-	for {
+	i := 0
+	for r := runeMin; r < runeMax; r++ {
+		fmt.Fprintf(bw, "[%#U], ", r)
 
-		buffer.Reset()
-		for j := 0; j < 8; j++ {
-			buffer.WriteString(fmt.Sprintf("[%c:U+%x], ", r, r))
-			r++
-
-			if r > runeMax {
-				break
-			}
+		if (i+1)%8 == 0 {
+			bw.WriteByte('\n')
 		}
-		buffer.WriteRune('\n')
-
-		f.Write(buffer.Bytes())
-
-		if r > runeMax {
-			break
-		}
+		i++
 	}
 
 	return nil
 }
 
 func main() {
+	err := GenerateUnicodeTable("unicode_table.txt", 64, 10074)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
+func printSomeRunes() {
 	s := "\u1699 \u03A8 \u03CF \u090B \u0DA3 \u0FD5 \u2230"
 	fmt.Println(s)
-
-	GenerateUnicodeTable("unicode_chars.txt", 64, 10074)
 }

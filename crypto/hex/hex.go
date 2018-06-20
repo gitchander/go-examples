@@ -9,34 +9,34 @@ const (
 	hexUpper = "0123456789ABCDEF"
 )
 
-func HiNibble(b byte) byte {
+func nibbleHi(b byte) byte {
 	return b >> 4
 }
 
-func LoNibble(b byte) byte {
+func nibbleLo(b byte) byte {
 	return b & 0x0F
 }
 
-func NibblesToByte(hiNibble byte, loNibble byte) byte {
+func nibblesToByte(hiNibble byte, loNibble byte) byte {
 	return (hiNibble << 4) | (loNibble & 0x0F)
 }
 
-func QuoRem(x, y int) (q, r int) {
+func quoRem(x, y int) (q, r int) {
 	q = x / y
 	r = x - q*y
 	return
 }
 
 func writeByteHex(b byte, bs []byte) {
-	bs[0] = hexUpper[HiNibble(b)]
-	bs[1] = hexUpper[LoNibble(b)]
+	bs[0] = hexUpper[nibbleHi(b)]
+	bs[1] = hexUpper[nibbleLo(b)]
 }
 
 func HexQuad(bs []byte) string {
 
 	//example return value: "D7A8FBB3 07D78094 69CA9ABC B0082E4F 8D5651E4 6D3CDB76 2D02D0BF 37C9E592"
 
-	q, r := QuoRem(len(bs), 4)
+	q, r := quoRem(len(bs), 4)
 
 	buffer := new(bytes.Buffer)
 

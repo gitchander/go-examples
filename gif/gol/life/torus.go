@@ -5,32 +5,31 @@ import (
 )
 
 type Torus struct {
-	nX, nY     int
+	size       Point
 	curr, next *bitmap.Bitmap
 }
 
-func NewTorus(nX, nY int) *Torus {
-	if nX < 0 {
-		nX = 0
+func NewTorus(size Point) *Torus {
+	if size.X < 0 {
+		size.X = 0
 	}
-	if nY < 0 {
-		nY = 0
+	if size.Y < 0 {
+		size.Y = 0
 	}
-	n := nX * nY
+	n := size.X * size.Y
 	return &Torus{
-		nX:   nX,
-		nY:   nY,
+		size: size,
 		curr: bitmap.New(n),
 		next: bitmap.New(n),
 	}
 }
 
-func (t *Torus) Size() (nX, nY int) {
-	return t.nX, t.nY
+func (t *Torus) Size() (x, y int) {
+	return t.size.X, t.size.Y
 }
 
 func (t *Torus) Empty() bool {
-	return (t.nX == 0) || (t.nY == 0)
+	return (t.size.X == 0) || (t.size.Y == 0)
 }
 
 func (t *Torus) swapBuffers() {
@@ -41,8 +40,8 @@ func (t *Torus) Next() {
 	if t.Empty() {
 		return
 	}
-	for y := 0; y < t.nY; y++ {
-		for x := 0; x < t.nX; x++ {
+	for y := 0; y < t.size.Y; y++ {
+		for x := 0; x < t.size.X; x++ {
 			var (
 				i = t.offset(x, y)
 				n = t.neighbors(x, y)
@@ -71,9 +70,9 @@ func (t *Torus) neighbors(x, y int) (n int) {
 }
 
 func (t *Torus) offset(x, y int) int {
-	x = mod(x, t.nX)
-	y = mod(y, t.nY)
-	return y*t.nX + x
+	x = mod(x, t.size.X)
+	y = mod(y, t.size.Y)
+	return y*t.size.X + x
 }
 
 func mod(x, y int) int {
@@ -99,9 +98,9 @@ func (t *Torus) Set(x, y int, v bool) {
 	t.curr.Set(t.offset(x, y), v)
 }
 
-func (t *Torus) Clone() *Torus {
-	c := NewTorus(t.nX, t.nY)
-	n := t.nX * t.nY
+func (t *Torus) Clone() interface{} {
+	c := NewTorus(t.size)
+	n := t.size.X * t.size.Y
 	for i := 0; i < n; i++ {
 		v, _ := t.curr.Get(i)
 		c.curr.Set(i, v)
@@ -109,11 +108,17 @@ func (t *Torus) Clone() *Torus {
 	return c
 }
 
-func (t1 *Torus) Equal(t2 *Torus) bool {
-	if (t1.nX != t2.nX) || (t1.nY != t2.nY) {
+func (t1 *Torus) Equal(a interface{}) bool {
+
+	t2, ok := a.(*Torus)
+	if !ok {
 		return false
 	}
-	n := t1.nX * t1.nY
+
+	if (t1.size.X != t2.size.X) || (t1.size.Y != t2.size.Y) {
+		return false
+	}
+	n := t1.size.X * t1.size.Y
 	for i := 0; i < n; i++ {
 		v1, _ := t1.curr.Get(i)
 		v2, _ := t2.curr.Get(i)

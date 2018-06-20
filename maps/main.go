@@ -1,11 +1,12 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"sort"
 )
 
-// Source: https://www.callicoder.com/golang-maps/
+// https://www.callicoder.com/golang-maps/
 
 func main() {
 	exampleNil()
@@ -21,6 +22,7 @@ func main() {
 	exampleEmptyValues()
 	exampleArrayKeys()
 	exampleStructKeys()
+	exampleHash()
 }
 
 func exampleNil() {
@@ -232,4 +234,22 @@ func exampleStructKeys() {
 	m[Size{Width: 245, Height: 11}] = "245x11"
 	m[Size{Width: 0, Height: 0}] = "Zero"
 	fmt.Println(m)
+}
+
+func exampleHash() {
+	var m = make(map[[sha256.Size]byte]string)
+
+	vs := []string{
+		"alpha",
+		"betta",
+		"gamma",
+	}
+
+	for _, s := range vs {
+		m[sha256.Sum256([]byte(s))] = s
+	}
+
+	for key, val := range m {
+		fmt.Printf("sha256(%q) = %X\n", val, key)
+	}
 }

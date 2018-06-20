@@ -30,6 +30,6 @@ func BigFibb() func() *big.Int {
 func main() {
 	next := BigFibb()
 	for i := 0; i < 1000; i++ {
-		fmt.Println(next())
+		fmt.Printf("F[%d] = %v\n", i+1, next())
 	}
 }

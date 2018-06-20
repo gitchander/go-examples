@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"code.google.com/p/draw2d/draw2d"
+	"github.com/llgcode/draw2d/draw2dimg"
 
 	"github.com/gitchander/heuristic/math/graph2d"
 	"github.com/gitchander/heuristic/math/hexm"
@@ -46,14 +46,14 @@ func intMin(x, y int) int {
 
 func main() {
 
-	ps := hexm.HexPolygon()
+	ps := hexm.HexVertexes(hexm.Angled)
 
 	width := 256
 	height := 256
 
 	i := image.NewRGBA(image.Rect(0, 0, width, height))
 
-	gc := draw2d.NewGraphicContext(i)
+	gc := draw2dimg.NewGraphicContext(i)
 
 	var cellRadius = float32(intMin(width, height)) * 0.4
 
