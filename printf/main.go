@@ -29,6 +29,15 @@ func main() {
 
 	data := []byte{0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF}
 
+	// byte hex
+	fmt.Printf("%#x\n", 0x07)    // 0x7
+	fmt.Printf("%#X\n", 0x07)    // 0X7
+	fmt.Printf("%#X\n", 0xA7)    // 0XA7
+	fmt.Printf("%#02x\n", 0x07)  // 0x07
+	fmt.Printf("0x%02x\n", 0x07) // 0x07
+	fmt.Printf("0x%02x\n", 0xA7) // 0xa7
+	fmt.Printf("0x%02X\n", 0xA7) // 0xA7
+
 	// bytes hex
 	fmt.Printf("%x\n", 123456789) // 75bcd15
 	fmt.Printf("%X\n", 123456789) // 75BCD15
