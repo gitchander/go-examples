@@ -17,6 +17,7 @@ func newRand() *rand.Rand {
 }
 
 var (
+	quo, rem   int
 	quo1, rem1 int
 	quo2, rem2 int
 )
@@ -75,7 +76,7 @@ func BenchmarkQuoRem1(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		x = r.Int()
 		y = r.Int() + 1
-		quo1, rem1 = QuoRem1(x, y)
+		quo, rem = QuoRem1(x, y)
 	}
 }
 
@@ -85,6 +86,6 @@ func BenchmarkQuoRem2(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		x = r.Int()
 		y = r.Int() + 1
-		quo2, rem2 = QuoRem2(x, y)
+		quo, rem = QuoRem2(x, y)
 	}
 }
