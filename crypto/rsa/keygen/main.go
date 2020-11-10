@@ -29,6 +29,10 @@ func simple() {
 
 	alisePublicKey := &alisePrivateKey.PublicKey
 
+	fmt.Println("PublicKey:")
+	fmt.Println("\tE:", alisePublicKey.E)
+	fmt.Printf("\tN: %x\n", alisePublicKey.N)
+
 	secretMessage := []byte("Hello, World!")
 	label := []byte{}
 	hash := sha256.New()
