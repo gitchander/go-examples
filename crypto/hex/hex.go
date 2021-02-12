@@ -7,6 +7,8 @@ import (
 const (
 	hexLower = "0123456789abcdef"
 	hexUpper = "0123456789ABCDEF"
+
+	hexTable = hexUpper
 )
 
 func byteToNibbles(b byte) (hi, lo byte) {
@@ -29,17 +31,16 @@ func quoRem(x, y int) (quo, rem int) {
 
 func writeByteHex(b byte, bs []byte) {
 	hi, lo := byteToNibbles(b)
-	bs[0] = hexUpper[hi]
-	bs[1] = hexUpper[lo]
+	bs[0] = hexTable[hi]
+	bs[1] = hexTable[lo]
 }
 
+// example return value: "D7A8FBB3 07D78094 69CA9ABC B0082E4F 8D5651E4 6D3CDB76 2D02D0BF 37C9E592"
 func HexQuad(bs []byte) string {
-
-	//example return value: "D7A8FBB3 07D78094 69CA9ABC B0082E4F 8D5651E4 6D3CDB76 2D02D0BF 37C9E592"
 
 	quo, rem := quoRem(len(bs), 4)
 
-	buffer := new(bytes.Buffer)
+	var buf bytes.Buffer
 
 	const spaceChar = ' ' // Space
 	k := 0
@@ -57,25 +58,25 @@ func HexQuad(bs []byte) string {
 
 		fill(bs[k:k+4], p[1:])
 		k += 4
-		buffer.Write(p[1:])
+		buf.Write(p[1:])
 
 		for i := 1; i < quo; i++ {
 			fill(bs[k:k+4], p[1:])
 			k += 4
-			buffer.Write(p)
+			buf.Write(p)
 		}
 	}
 
 	if rem > 0 {
 		if k > 0 {
-			buffer.WriteByte(spaceChar)
+			buf.WriteByte(spaceChar)
 		}
 		for i := 0; i < rem; i++ {
 			writeByteHex(bs[k], p[1:])
-			buffer.Write(p[1:3])
+			buf.Write(p[1:3])
 			k++
 		}
 	}
 
-	return string(buffer.Bytes())
+	return string(buf.Bytes())
 }

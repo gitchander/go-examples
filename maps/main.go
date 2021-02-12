@@ -9,29 +9,39 @@ import (
 // https://www.callicoder.com/golang-maps/
 
 func main() {
-	exampleNil()
-	exampleMake()
-	exampleInit()
-	exampleGet()
-	exampleGetAndCheck()
-	exampleCheck()
-	exampleDelete()
-	exampleReference()
-	exampleIterating()
-	exampleSortedPrint()
-	exampleEmptyValues()
-	exampleArrayKeys()
-	exampleStructKeys()
-	exampleHash()
+	fs := []func(){
+		exampleNil,
+		exampleMake,
+		exampleInit,
+		exampleGet,
+		exampleGetAndCheck,
+		exampleCheck,
+		exampleDelete,
+		exampleReference,
+		exampleIterating,
+		exampleSortedPrint,
+		exampleEmptyValues,
+		exampleArrayKeys,
+		exampleStructKeys,
+		exampleHash,
+	}
+	for _, f := range fs {
+		f()
+		fmt.Println()
+	}
 }
 
 func exampleNil() {
+	defer func() {
+		err := recover()
+		fmt.Println("error:", err)
+	}()
 	var m map[string]int
 	fmt.Println(m)
 	if m == nil {
 		fmt.Println("m is nil")
 	}
-	// m["one"] = 1 // panic: assignment to entry in nil map
+	m["one"] = 1 // panic: assignment to entry in nil map
 }
 
 func exampleMake() {
@@ -176,7 +186,7 @@ func exampleSortedPrint() {
 		6: "Saturday",
 	}
 
-	fmt.Println("\nUnsorted days:")
+	fmt.Println("Unsorted days:")
 	for day, name := range m {
 		fmt.Printf("%d: %s\n", day, name)
 	}
@@ -187,7 +197,7 @@ func exampleSortedPrint() {
 	}
 	sort.Ints(days)
 
-	fmt.Println("\nSorted days:")
+	fmt.Println("Sorted days:")
 	for _, day := range days {
 		fmt.Printf("%d: %s\n", day, m[day])
 	}

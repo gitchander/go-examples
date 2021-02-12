@@ -1,0 +1,4 @@
+$ go fmt
+$ go run main.go > result
+$ cmp main.go result
+$ rm result

@@ -1,17 +1,17 @@
 package reverse
 
-type Interface interface {
+type Swapper interface {
 	Len() int
 	Swap(i, j int)
 }
 
-func Reverse(v Interface) {
+func Reverse(s Swapper) {
 	var (
 		i = 0
-		j = v.Len() - 1
+		j = s.Len() - 1
 	)
 	for i < j {
-		v.Swap(i, j)
+		s.Swap(i, j)
 		i++
 		j--
 	}

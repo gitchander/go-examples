@@ -111,7 +111,7 @@ func newRandNow() *rand.Rand {
 }
 
 func randByte(r *rand.Rand) byte {
-	return byte(r.Intn(256))
+	return byte(r.Uint32())
 }
 
 func randBool(r *rand.Rand) bool {

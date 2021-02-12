@@ -373,5 +373,5 @@ func requestServer() {
 	fmt.Println(err)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	fmt.Printf("\nWebserver said: `%s`", string(body))
+	fmt.Printf("\nWebserver said: `%s`\n", string(body))
 }

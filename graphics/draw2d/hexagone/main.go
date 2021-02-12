@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"image"
 	"image/png"
 	"log"
@@ -14,33 +13,30 @@ import (
 	"github.com/gitchander/heuristic/math/hexm"
 )
 
-func saveToPngFile(filePath string, m image.Image) {
-	f, err := os.Create(filePath)
+func checkError(err error) {
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
-	defer f.Close()
-	b := bufio.NewWriter(f)
-	err = png.Encode(b, m)
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
-	err = b.Flush()
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
-	fmt.Printf("Wrote %s OK.\n", filePath)
 }
 
-func intMin(x, y int) int {
+func saveToPngFile(filePath string, m image.Image) error {
 
+	f, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	bw := bufio.NewWriter(f)
+	defer bw.Flush()
+
+	return png.Encode(bw, m)
+}
+
+func minInt(x, y int) int {
 	if x < y {
 		return x
 	}
-
 	return y
 }
 
@@ -48,14 +44,16 @@ func main() {
 
 	ps := hexm.HexVertexes(hexm.Angled)
 
-	width := 256
-	height := 256
+	var (
+		width  = 256
+		height = 256
+	)
 
-	i := image.NewRGBA(image.Rect(0, 0, width, height))
+	m := image.NewRGBA(image.Rect(0, 0, width, height))
 
-	gc := draw2dimg.NewGraphicContext(i)
+	gc := draw2dimg.NewGraphicContext(m)
 
-	var cellRadius = float32(intMin(width, height)) * 0.4
+	var cellRadius = float32(minInt(width, height)) * 0.4
 
 	var centerX = float32(width) * 0.5
 	var centerY = float32(height) * 0.5
@@ -85,5 +83,6 @@ func main() {
 
 	gc.Stroke()
 
-	saveToPngFile("TestPath.png", i)
+	err := saveToPngFile("test_path.png", m)
+	checkError(err)
 }
