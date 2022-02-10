@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -34,19 +35,41 @@ func round(a Shape, stat *Stat) {
 	fmt.Printf("%s %c %s\n", a, r, b)
 }
 
+type LineReader interface {
+	ReadLine() (string, error)
+}
+
+type lineReader struct {
+	br *bufio.Reader
+}
+
+func (p *lineReader) ReadLine() (string, error) {
+	line, _, err := p.br.ReadLine()
+	if err != nil {
+		return "", err
+	}
+	return string(line), nil
+}
+
+func NewLineReader(r io.Reader) LineReader {
+	return &lineReader{
+		br: bufio.NewReader(r),
+	}
+}
+
 func main() {
 
 	var stat Stat
 
-	r := bufio.NewReader(os.Stdin)
+	lr := NewLineReader(os.Stdin)
 
 	for {
-		line, _, err := r.ReadLine()
+		line, err := lr.ReadLine()
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		command := strings.ToLower(string(line))
+		command := strings.ToLower(line)
 
 		switch command {
 		case "q", "quit":

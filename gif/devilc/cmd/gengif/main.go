@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	if err := devilc.MakeGif("devil-curve.gif"); err != nil {
+	err := devilc.MakeGif("devil-curve.gif")
+	if err != nil {
 		log.Fatal(err)
 	}
 }

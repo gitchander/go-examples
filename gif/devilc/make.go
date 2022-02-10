@@ -7,7 +7,7 @@ import (
 	"github.com/gitchander/cairo"
 )
 
-func MakePNG(fileName string, width, height int, a, b float64) error {
+func MakePNG(fileName string, width, height int, d Devil) error {
 
 	surface, err := cairo.NewSurface(cairo.FORMAT_ARGB32, width, height)
 	if err != nil {
@@ -21,7 +21,7 @@ func MakePNG(fileName string, width, height int, a, b float64) error {
 	}
 	defer canvas.Destroy()
 
-	renderScene(canvas, width, height, a, b)
+	renderScene(canvas, width, height, d)
 
 	return surface.WriteToPNG(fileName)
 }

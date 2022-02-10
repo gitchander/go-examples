@@ -64,7 +64,7 @@ func run() error {
 
 func getCenter(surface *cairo.Surface) hexm.Vector {
 	return hexm.Vector{
-		float64(surface.GetWidth()) * 0.5,
-		float64(surface.GetHeight()) * 0.5,
+		X: float64(surface.GetWidth()) / 2,
+		Y: float64(surface.GetHeight()) / 2,
 	}
 }

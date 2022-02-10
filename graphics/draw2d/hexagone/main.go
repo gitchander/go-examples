@@ -62,7 +62,11 @@ func main() {
 	T.Scale(cellRadius, cellRadius)
 	T.Move(centerX, centerY)
 
-	v := graph2d.Vector{float32(ps[0].X), float32(ps[0].Y)}
+	v := graph2d.Vector{
+		X: float32(ps[0].X),
+		Y: float32(ps[0].Y),
+	}
+
 	v = T.Apply(v)
 
 	x0 := float64(v.X)
@@ -71,7 +75,11 @@ func main() {
 	gc.MoveTo(x0, y0)
 	for i := 1; i < len(ps); i++ {
 
-		v = graph2d.Vector{float32(ps[i].X), float32(ps[i].Y)}
+		v = graph2d.Vector{
+			X: float32(ps[i].X),
+			Y: float32(ps[i].Y),
+		}
+
 		v = T.Apply(v)
 
 		x := float64(v.X)

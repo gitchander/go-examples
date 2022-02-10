@@ -45,6 +45,7 @@ func main() {
 	fmt.Printf("%X\n", data)      // 0123456789ABCDEF
 	fmt.Printf("% x\n", data)     // 01 23 45 67 89 ab cd ef
 	fmt.Printf("% X\n", data)     // 01 23 45 67 89 AB CD EF
+	fmt.Printf("%x\n", -0.25)     // -0x1p-02
 
 	fmt.Printf("%o, %o\n", 8, 64) // 10, 100
 

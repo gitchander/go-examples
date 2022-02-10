@@ -1,10 +1,30 @@
 package devilc
 
-import (
-	"math"
-)
+import "math"
 
-func devilCalcFunc(aa, bb float64, t float64) Point {
+// Devil's Curve
+
+// https://en.wikipedia.org/wiki/Devil%27s_curve
+// https://mathworld.wolfram.com/DevilsCurve.html
+
+type Devil struct {
+	A float64
+	B float64
+}
+
+func (d Devil) Functor() Functor {
+	return &devilFunctor{
+		aa: square(d.A),
+		bb: square(d.B),
+	}
+}
+
+type devilFunctor struct {
+	aa float64
+	bb float64
+}
+
+func (p *devilFunctor) Func(t float64) (Point2f, bool) {
 
 	sin, cos := math.Sincos(t)
 
@@ -13,25 +33,17 @@ func devilCalcFunc(aa, bb float64, t float64) Point {
 		c2 = cos * cos
 	)
 
-	d := (aa*s2 - bb*c2) / (s2 - c2)
+	d := ((p.aa * s2) - (p.bb * c2)) / (s2 - c2)
 	if d < 0 {
-		return Point{}
+		return Point2f{}, false
 	}
 
 	sqrt := math.Sqrt(d)
 
-	return Point{
+	r := Point2f{
 		X: cos * sqrt,
 		Y: sin * sqrt,
 	}
-}
 
-func getDevilCalcFunc(a, b float64) CalcFunc {
-	var (
-		aa = a * a
-		bb = b * b
-	)
-	return func(t float64) Point {
-		return devilCalcFunc(aa, bb, t)
-	}
+	return r, true
 }

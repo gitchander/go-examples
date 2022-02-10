@@ -4,6 +4,13 @@ type Point struct {
 	X, Y int
 }
 
+func Pt(x, y int) Point {
+	return Point{
+		X: x,
+		Y: y,
+	}
+}
+
 func (p Point) Add(q Point) Point {
 	return Point{p.X + q.X, p.Y + q.Y}
 }

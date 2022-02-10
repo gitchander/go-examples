@@ -80,7 +80,7 @@ func PointsFromPattern(p Pattern) (ps []life.Point) {
 			data = data[size:]
 
 			if r == p.Target {
-				ps = append(ps, life.Point{x, y})
+				ps = append(ps, life.Pt(x, y))
 			}
 			x++
 		}

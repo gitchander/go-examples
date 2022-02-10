@@ -16,7 +16,9 @@ func main() {
 	flag.Parse()
 	rand.Seed(time.Now().UTC().UnixNano())
 
-	out, err := os.Create("./output.gif")
+	filename := "output.gif"
+
+	out, err := os.Create(filename)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -49,5 +51,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Generated image to output.gif \n")
+	fmt.Printf("Generated image to %q\n", filename)
 }

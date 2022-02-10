@@ -7,7 +7,11 @@ import (
 )
 
 func main() {
-	if err := devilc.MakePNG("test.png", 512, 512, 90, 100); err != nil {
+	d := devilc.Devil{
+		A: 90,
+		B: 100,
+	}
+	if err := devilc.MakePNG("test.png", 512, 512, d); err != nil {
 		log.Fatal(err)
 	}
 }

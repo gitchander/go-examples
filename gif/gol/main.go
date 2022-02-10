@@ -117,18 +117,18 @@ func SetPoints(t *life.Torus, ps life.Points) {
 
 var pars = []RenderParams{
 	RenderParams{
-		Size:       life.Point{X: 15, Y: 15},
+		Size:       life.Pt(15, 15),
 		FrameCount: 8,
 		Pattern:    patternGalaxy,
-		Loc:        life.Point{3, 3},
+		Loc:        life.Pt(3, 3),
 		Scale:      30,
 		Delay:      8,
 	},
 	RenderParams{
-		Size:       life.Point{X: 42, Y: 28},
+		Size:       life.Pt(42, 28),
 		FrameCount: 30,
 		Pattern:    patternGliderGun,
-		Loc:        life.Point{3, 3},
+		Loc:        life.Pt(3, 3),
 		Scale:      8,
 		Delay:      8,
 	},

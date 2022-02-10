@@ -15,7 +15,7 @@ func generate(n int) <-chan int {
 	return out
 }
 
-func sq(in <-chan int) <-chan int {
+func sqr(in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
 		for n := range in {
@@ -28,7 +28,7 @@ func sq(in <-chan int) <-chan int {
 
 func main() {
 	in := generate(20)
-	out := sq(in)
+	out := sqr(in)
 	for x := range out {
 		fmt.Println(x)
 	}

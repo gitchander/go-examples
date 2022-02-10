@@ -12,11 +12,9 @@ import (
 	"github.com/gitchander/cairo"
 )
 
-type CalcFunc func(t float64) Point
-
 var errDevilClosed = errors.New("devil is closed")
 
-func renderScene(canvas *cairo.Canvas, width, height int, a, b float64) {
+func renderScene(canvas *cairo.Canvas, width, height int, d Devil) {
 
 	var (
 		x0 = float64(width+1) * 0.5
@@ -41,41 +39,41 @@ func renderScene(canvas *cairo.Canvas, width, height int, a, b float64) {
 	m.Translate(x0, y0)
 	canvas.Save()
 	canvas.SetMatrix(m)
-	drawDevilCurve(canvas, a, b)
+	drawDevilCurve(canvas, d)
 	canvas.Restore()
 }
 
-func drawDevilCurve(canvas *cairo.Canvas, a, b float64) {
+func drawDevilCurve(canvas *cairo.Canvas, d Devil) {
 
-	cf := getDevilCalcFunc(a, b)
+	f := d.Functor()
 
 	const (
 		piDiv4 = math.Pi / 4
-		d      = 0.00001
+		ad     = 0.00001
 		count  = 100
 	)
-	rs := []Range{
-		Range{Min: -piDiv4 + d, Max: piDiv4 - d, Count: count},
-		Range{Min: piDiv4 + d, Max: 3*piDiv4 - d, Count: count},
-		Range{Min: 3*piDiv4 + d, Max: 5*piDiv4 - d, Count: count},
-		Range{Min: 5*piDiv4 + d, Max: 7*piDiv4 - d, Count: count},
+	intervals := []Interval{
+		Interval{Min: -piDiv4 + ad, Max: piDiv4 - ad, Count: count},
+		Interval{Min: piDiv4 + ad, Max: 3*piDiv4 - ad, Count: count},
+		Interval{Min: 3*piDiv4 + ad, Max: 5*piDiv4 - ad, Count: count},
+		Interval{Min: 5*piDiv4 + ad, Max: 7*piDiv4 - ad, Count: count},
 	}
 
-	drawCurve(canvas, cf, rs)
+	drawCurve(canvas, f, intervals)
 }
 
-func drawCurve(c *cairo.Canvas, cf CalcFunc, rs []Range) {
-	for _, r := range rs {
-		if n := r.Count; n > 1 {
+func drawCurve(c *cairo.Canvas, f Functor, intervals []Interval) {
+	for _, interval := range intervals {
+		if n := interval.Count; n > 1 {
 			var (
-				t  = minf(r.Min, r.Max)
-				dt = r.Step()
+				t  = minFloat64(interval.Min, interval.Max)
+				dt = interval.Step()
 			)
-			p := cf(t)
+			p, _ := f.Func(t)
 			c.MoveTo(p.X, p.Y)
 			t += dt
 			for i := 1; i < n; i++ {
-				p = cf(t)
+				p, _ = f.Func(t)
 				c.LineTo(p.X, p.Y)
 				t += dt
 			}
@@ -123,18 +121,23 @@ func (d *devilCalcer) Close() error {
 	return nil
 }
 
-func (d *devilCalcer) Calc(a, b float64) error {
+func (dc *devilCalcer) Calc(a, b float64) error {
 
-	if !d.opened {
+	if !dc.opened {
 		return errDevilClosed
 	}
 
 	var (
-		width  = d.surface.GetWidth()
-		height = d.surface.GetHeight()
+		width  = dc.surface.GetWidth()
+		height = dc.surface.GetHeight()
 	)
 
-	renderScene(d.canvas, width, height, a, b)
+	d := Devil{
+		A: a,
+		B: b,
+	}
+
+	renderScene(dc.canvas, width, height, d)
 
 	return nil
 }
@@ -204,7 +207,7 @@ func renderGif(w io.Writer) error {
 	defer dc.Close()
 
 	var (
-		mn   = mini(nX, nY)
+		mn   = minInt(nX, nY)
 		minV = float64(mn) / 8
 		maxV = float64(mn) / 4
 	)
